@@ -56,22 +56,21 @@ internal extension String {
    */
   func split(by: Character, maxSplits: Int = 0) -> [String] {
     var s = [String]()
-    var numSplits = 0
-
-    var curIdx = self.startIndex
-    for i in self.characters.indices {
-      let c = self[i]
-      if c == by && (maxSplits == 0 || numSplits < maxSplits) {
-        s.append(self[curIdx..<i])
-        curIdx = self.index(after: i)
-        numSplits += 1
+    var end = ""
+    let split = self.components(separatedBy: String(by))
+    if maxSplits == 0 {return split}
+    for str in split {
+      if s.count >= maxSplits {
+        end = end + (end.count > 0 ? String(by) : "") + str
+      }else{
+        s.append(str)
       }
     }
-
-    if curIdx != self.endIndex {
-      s.append(self[curIdx..<self.endIndex])
+    
+    if end.count > 0 {
+      s.append(end)
     }
-
+    
     return s
   }
 
@@ -85,7 +84,7 @@ internal extension String {
    */
   func padded(toWidth width: Int, with padChar: Character = " ") -> String {
     var s = self
-    var currentLength = self.characters.count
+    var currentLength = self.count
 
     while currentLength < width {
       s.append(padChar)
@@ -113,7 +112,7 @@ internal extension String {
     var currentLineWidth = 0
 
     for word in self.split(by: splitBy) {
-      let wordLength = word.characters.count
+      let wordLength = word.count
 
       if currentLineWidth + wordLength + 1 > width {
         /* Word length is greater than line length, can't wrap */
